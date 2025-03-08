@@ -32,22 +32,11 @@ echo "检测系统架构..."
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 case "$ARCH" in
-    x86_64)
-        ARCH="amd64"
-        ;;
-    aarch64)
-        ARCH="arm64"
-        ;;
-    armv7l)
-        ARCH="armv7"
-        ;;
-    i386|i686)
-        ARCH="386"
-        ;;
-    *)
-        echo "错误：不支持的系统架构：$ARCH"
-        exit 1
-        ;;
+    x86_64) ARCH="amd64";;
+    aarch64) ARCH="arm64";;
+    armv7l) ARCH="armv7";;
+    i386|i686) ARCH="386";;
+    *) echo "错误：不支持的系统架构：$ARCH"; exit 1;;
 esac
 echo "检测到系统架构：$OS-$ARCH"
 
@@ -81,9 +70,18 @@ if ! command -v sing-box > /dev/null 2>&1; then
     exit 1
 fi
 
+# 获取配置文件 URL
+DEFAULT_CONFIG_URL="https://sub.hechunyu.com/config-zz-realip-route"
+echo "请输入 sing-box 配置文件 URL（直接回车使用默认值）:"
+echo "默认 URL: $DEFAULT_CONFIG_URL"
+read -r CONFIG_URL
+if [ -z "$CONFIG_URL" ]; then
+    CONFIG_URL="$DEFAULT_CONFIG_URL"
+    echo "未输入 URL，将使用默认配置文件地址：$CONFIG_URL"
+fi
+
 # 下载 sing-box 配置文件
 echo "下载 sing-box 配置文件..."
-CONFIG_URL="https://sub.hechunyu.com/config-zz-realip-route"
 mkdir -p /etc/sing-box
 if ! wget -O /etc/sing-box/config.json "$CONFIG_URL"; then
     echo "错误：下载配置文件失败，请检查网络或 URL 是否有效"
@@ -108,16 +106,8 @@ WantedBy=multi-user.target
 EOF
 
 # 检查 systemd 是否可用并启用服务
-if ! systemctl daemon-reload; then
-    echo "错误：systemctl daemon-reload 失败"
-    exit 1
-fi
-if ! systemctl enable sing-box; then
-    echo "错误：启用 sing-box 服务失败"
-    exit 1
-fi
-if ! systemctl start sing-box; then
-    echo "错误：启动 sing-box 服务失败，请检查配置文件"
+if ! systemctl daemon-reload || ! systemctl enable sing-box || ! systemctl start sing-box; then
+    echo "错误：配置或启动 sing-box 服务失败，请检查配置文件"
     exit 1
 fi
 
@@ -130,22 +120,18 @@ else
     echo "警告：systemd-resolved 服务未运行，跳过此步骤"
 fi
 
-# 检查并处理 /etc/resolv.conf
+# 检查并配置 /etc/resolv.conf
 echo "检查并配置 /etc/resolv.conf..."
 if [ -L /etc/resolv.conf ]; then
     echo "/etc/resolv.conf 是一个软连接，正在删除并重建..."
     rm -f /etc/resolv.conf
-    echo "nameserver 127.0.0.1" > /etc/resolv.conf
 elif [ -f /etc/resolv.conf ]; then
     echo "/etc/resolv.conf 不是软连接，直接覆盖内容..."
-    echo "nameserver 127.0.0.1" > /etc/resolv.conf
 else
     echo "/etc/resolv.conf 不存在，正在创建..."
-    echo "nameserver 127.0.0.1" > /etc/resolv.conf
 fi
-if ! chattr +i /etc/resolv.conf; then
-    echo "警告：无法锁定 /etc/resolv.conf，可能被其他程序覆盖"
-fi
+echo "nameserver 127.0.0.1" > /etc/resolv.conf
+chattr +i /etc/resolv.conf || echo "警告：无法锁定 /etc/resolv.conf"
 
 # 启用 IP 转发
 echo "启用 IP 转发..."
@@ -166,17 +152,10 @@ iptables -A INPUT -p udp --dport 53 -j ACCEPT
 iptables -A FORWARD -i end0 -j ACCEPT
 iptables -t nat -A POSTROUTING -o end0 -j MASQUERADE
 
-# 检查并保存 iptables 规则
-echo "检查并保存 iptables 规则..."
-if [ -d /etc/iptables ]; then
-    if [ -f /etc/iptables/rules.v4 ]; then
-        echo "/etc/iptables/rules.v4 已存在，正在备份..."
-        mv /etc/iptables/rules.v4 /etc/iptables/rules.v4.bak-$(date +%F-%T)
-    fi
-else
-    echo "/etc/iptables 目录不存在，正在创建..."
-    mkdir -p /etc/iptables
-fi
+# 保存 iptables 规则
+echo "保存 iptables 规则..."
+mkdir -p /etc/iptables
+[ -f /etc/iptables/rules.v4 ] && mv /etc/iptables/rules.v4 /etc/iptables/rules.v4.bak-$(date +%F-%T)
 if ! iptables-save > /etc/iptables/rules.v4; then
     echo "错误：保存 iptables 规则失败"
     exit 1
@@ -184,18 +163,16 @@ fi
 
 # 配置 iptables 持久化
 echo "安装 iptables-persistent 并保存规则..."
-if ! echo "iptables-persistent iptables-persistent/autosave_v4 boolean true" | debconf-set-selections || \
-   ! echo "iptables-persistent iptables-persistent/autosave_v6 boolean true" | debconf-set-selections || \
-   ! apt install -y iptables-persistent; then
+echo "iptables-persistent iptables-persistent/autosave_v4 boolean true" | debconf-set-selections
+echo "iptables-persistent iptables-persistent/autosave_v6 boolean true" | debconf-set-selections
+if ! apt install -y iptables-persistent; then
     echo "错误：安装 iptables-persistent 失败"
     exit 1
 fi
 
-# 重启网络服务以应用更改
+# 重启网络服务
 echo "重启网络服务..."
-if ! systemctl restart networking; then
-    echo "警告：重启网络服务失败，可能需要手动重启"
-fi
+systemctl restart networking || echo "警告：重启网络服务失败，可能需要手动重启"
 
 # 检查服务状态
 echo "检查服务状态..."
@@ -208,4 +185,3 @@ iptables -L -v -n
 iptables -t nat -L -v -n
 
 echo "部署完成！请将其他设备的网关和 DNS 指向此设备的 IP（192.168.1.3）。"
-
