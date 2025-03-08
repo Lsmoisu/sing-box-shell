@@ -70,6 +70,30 @@ if ! command -v sing-box > /dev/null 2>&1; then
     exit 1
 fi
 
+# 设置自动更新配置文件脚本
+echo "设置自动更新配置文件脚本..."
+UP_CONFIG_URL="https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/upconfig.sh"
+if ! wget -O /usr/local/bin/upconfig.sh "$UP_CONFIG_URL"; then
+    echo "错误：下载 upconfig.sh 失败，请检查网络或 URL 是否有效"
+    exit 1
+fi
+
+# 设置脚本权限
+chmod +x /usr/local/bin/upconfig.sh
+
+# 检查脚本是否可执行
+if [ ! -x /usr/local/bin/upconfig.sh ]; then
+    echo "错误：upconfig.sh 设置执行权限失败"
+    exit 1
+fi
+
+# 添加 crontab 任务，每分钟执行一次
+echo "配置 crontab 自动更新任务..."
+(crontab -l 2>/dev/null | grep -v "upconfig.sh"; echo "* * * * * /usr/local/bin/upconfig.sh") | crontab -
+if [ $? -ne 0 ]; then
+    echo "警告：crontab 配置失败，请手动检查"
+fi
+
 # 获取配置文件 URL
 DEFAULT_CONFIG_URL="https://sub.hechunyu.com/config-zz-realip-route"
 echo "请输入 sing-box 配置文件 URL（直接回车使用默认值）:"
