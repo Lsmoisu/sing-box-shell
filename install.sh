@@ -42,7 +42,7 @@ echo "检测到系统架构：$OS-$ARCH"
 
 # 设置 sing-box 版本和下载地址
 SINGBOX_VERSION="1.11.4"
-SINGBOX_BASE_URL="https://gh.sageer.me/github.com/SagerNet/sing-box/releases/download"
+SINGBOX_BASE_URL="https://gh.aaa.team/github.com/SagerNet/sing-box/releases/download"
 SINGBOX_URL="${SINGBOX_BASE_URL}/v${SINGBOX_VERSION}/sing-box-${SINGBOX_VERSION}-${OS}-${ARCH}.tar.gz"
 echo "sing-box 下载地址：$SINGBOX_URL"
 
@@ -72,7 +72,7 @@ fi
 
 # 设置自动更新配置文件脚本
 echo "设置自动更新配置文件脚本..."
-UP_CONFIG_URL="https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/upconfig.sh"
+UP_CONFIG_URL="https://gh.aaa.team/https://raw.githubusercontent.com/Lsmoisu/sing-box-shell/refs/heads/main/upconfig.sh"
 if ! wget -O /usr/local/bin/upconfig.sh "$UP_CONFIG_URL"; then
     echo "错误：下载 upconfig.sh 失败，请检查网络或 URL 是否有效"
     exit 1
@@ -95,7 +95,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # 获取配置文件 URL
-DEFAULT_CONFIG_URL="https://sub.hechunyu.com/config-zz-realip-route"
+DEFAULT_CONFIG_URL="https://sub.aaa.team/config-zz-realip-route"
 echo "请输入 sing-box 配置文件 URL（直接回车使用默认值）:"
 echo "默认 URL: $DEFAULT_CONFIG_URL"
 read -r CONFIG_URL
