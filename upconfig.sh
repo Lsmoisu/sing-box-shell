@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 定义变量
-REMOTE_URL="https://sub.hechunyu.com/config-66ca38b4bd8d"
+REMOTE_URL="https://sub.aaa.team/config-66ca38b4bd8d"
 LOCAL_CONFIG="/etc/sing-box/config.json"
 TEMP_CONFIG="/tmp/sing-box-config.json.new"
 LOG_FILE="/var/log/sing-box-config-update.log"
