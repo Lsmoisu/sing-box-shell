@@ -31,7 +31,7 @@ bash <(curl -sL https://gh.aaa.team/https://github.com/Lsmoisu/sing-box-shell/ra
 ```
 ### 从 其他Git 部署
 ```shell
-bash <(curl -sL https://git.hechunyu.com/chunyu/sing-box-shell/raw/branch/main/install.sh)
+bash <(curl -sL https://git.aaa.team/chunyu/sing-box-shell/raw/branch/main/install.sh)
 ```
 
 ## 本地运行
