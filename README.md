@@ -23,7 +23,10 @@
 
 ```shell
 bash <(curl -sL https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
-或使用加速地址
+```
+
+### 使用加速地址
+```shell
 bash <(curl -sL https://gh.aaa.team/https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
 ```
 ### 从 其他Git 部署
