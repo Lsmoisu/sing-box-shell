@@ -1,5 +1,5 @@
 #!/bin/bash
-
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 # 定义变量
 REMOTE_URL="https://sub.aaa.team/config-66ca38b4bd8d"
 LOCAL_CONFIG="/etc/sing-box/config.json"
