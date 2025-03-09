@@ -155,7 +155,7 @@ setup_update_script() {
     [ -x /usr/local/bin/upconfig.sh ] || { log "ERROR" "upconfig.sh 设置权限失败"; exit 1; }
     
     log "DEBUG" "配置 crontab 任务..."
-    (crontab -l 2>/dev/null | grep -v "upconfig.sh"; echo "* * * * * /usr/local/bin/upconfig.sh") | crontab - || log "WARN" "crontab 配置失败"
+    (crontab -l 2>/dev/null | grep -v "upconfig.sh"; echo "* * * * * bash /usr/local/bin/upconfig.sh > /dev/null 2>&1") | crontab - || log "WARN" "crontab 配置失败"
 }
 
 # 下载配置文件
