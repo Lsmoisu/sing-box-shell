@@ -22,12 +22,13 @@
 ### 从 GitHub 部署
 
 ```shell
-bash <(curl -s https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
-加速地址：bash <(curl -s https://gh.aaa.team/https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
+bash <(curl -sL https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
+或使用加速地址
+bash <(curl -sL https://gh.aaa.team/https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
 ```
 ### 从 其他Git 部署
 ```shell
-bash <(curl -s https://git.hechunyu.com/chunyu/sing-box-shell/raw/branch/main/install.sh)
+bash <(curl -sL https://git.hechunyu.com/chunyu/sing-box-shell/raw/branch/main/install.sh)
 ```
 
 ## 本地运行
@@ -63,6 +64,6 @@ sh install.sh uninstall
 修改脚本顶部 LOG_LEVEL="DEBUG" 可启用详细调试日志。
 
 ## 已知问题
-IPv6 支持：若系统中未安装 ip6tables，IPv6 功能将受限（脚本会自动跳过）。
+IPv6 支持：未实现。
 系统兼容性：目前仅在 NanoPi R2S（Armbian Debian）测试，其他设备可能需调整。
 卸载限制：无法完全恢复 /etc/resolv.conf 的原始内容，默认设置为 8.8.8.8。
