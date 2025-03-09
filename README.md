@@ -15,7 +15,7 @@
 - **操作系统**：Linux（推荐 Debian/Ubuntu 系，只在 Armbian Debian 测试通过，其他设备和架构请自行测试）
 - **架构支持**：x86_64、arm64、armv7、i386
 - **权限**：需要 root 或 sudo 权限
-- **网络**：设备需能访问 GitHub 或其他指定的下载源
+- **网络**：设备需能访问 GitHub 或其他指定的下载源，如无法访问请使用github加速地址https://gh.aaa.team/
 
 ## 安装方法
 
@@ -23,6 +23,7 @@
 
 ```shell
 bash <(curl -s https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
+加速地址：bash <(curl -s https://gh.aaa.team/https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
 ```
 ### 从 其他Git 部署
 ```shell
