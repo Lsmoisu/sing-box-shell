@@ -16,45 +16,27 @@ Sing-Box Shell
 从 GitHub 部署
 ```shell
 bash <(curl -s https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
-从其他 Git 源部署
 ```
-收起
-
-自动换行
-
-复制
+从 其他Git 部署
+```shell
 bash <(curl -s https://git.hechunyu.com/chunyu/sing-box-shell/raw/branch/main/install.sh)
+```shell
+
 本地运行
 下载脚本：
-bash
-
-收起
-
-自动换行
-
-复制
+```shell
 wget https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh
+```
 添加执行权限并运行：
-bash
-
-收起
-
-自动换行
-
-复制
+```shell
 chmod +x install.sh
 sh install.sh
+```
 卸载方法
 运行脚本时添加 uninstall 参数：
-
-bash
-
-收起
-
-自动换行
-
-复制
+```shell
 sh install.sh uninstall
+```
 卸载将移除 sing-box 可执行文件、配置文件、服务、防火墙规则，并尝试恢复网络设置（如 /etc/resolv.conf 和 IP 转发）。
 
 使用说明
