@@ -37,7 +37,7 @@ bash <(curl -sL https://git.hechunyu.com/chunyu/sing-box-shell/raw/branch/main/i
 ## 本地运行
 下载脚本：
 ```shell
-wget https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh
+wget https://gh.aaa.team/https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh
 ```
 添加执行权限并运行：
 ```shell
