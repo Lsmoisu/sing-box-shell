@@ -6,13 +6,13 @@
 
 - **自动安装**：一键部署 `sing-box`，包括依赖安装、配置文件下载和网络设置。
 - **卸载支持**：通过 `uninstall` 参数还原安装时的所有改动。
-- **兼容性**：支持 POSIX Shell（如 `sh`），无需依赖 Bash。
+- **兼容性**：支持 POSIX Shell（如 `sh`）。
 - **日志输出**：美观的日志格式（INFO/DEBUG），便于调试。
-- **灵活配置**：支持自定义配置文件 URL，默认提供稳定配置。
+- **灵活配置**：支持自定义配置文件 URL(sing-box格式)，默认为模板配置，只能保证正常启动,安装后可手动替换配置问题件，路径为/etc/sing-box/config.json。
 
 ## 环境要求
 
-- **操作系统**：Linux（推荐 Debian/Ubuntu 系，已在 Armbian Debian 测试）
+- **操作系统**：Linux（推荐 Debian/Ubuntu 系，只在 Armbian Debian 测试通过，其他设备和架构请自行测试）
 - **架构支持**：x86_64、arm64、armv7、i386
 - **权限**：需要 root 或 sudo 权限
 - **网络**：设备需能访问 GitHub 或其他指定的下载源
@@ -27,7 +27,7 @@ bash <(curl -s https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/ins
 ### 从 其他Git 部署
 ```shell
 bash <(curl -s https://git.hechunyu.com/chunyu/sing-box-shell/raw/branch/main/install.sh)
-```shell
+```
 
 ## 本地运行
 下载脚本：
