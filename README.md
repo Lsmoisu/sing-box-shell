@@ -14,17 +14,10 @@ Sing-Box Shell
 网络：设备需能访问 GitHub 或其他指定的下载源
 安装方法
 从 GitHub 部署
-bash
-
-收起
-
-自动换行
-
-复制
+```shell
 bash <(curl -s https://github.com/Lsmoisu/sing-box-shell/raw/refs/heads/main/install.sh)
 从其他 Git 源部署
-bash
-
+```
 收起
 
 自动换行
