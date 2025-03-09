@@ -66,13 +66,13 @@ sh install.sh uninstall
 配置 systemd 服务和防火墙规则。
 设置 DNS 和 IP 转发。
 配置选项：
-运行时可输入自定义配置文件 URL，默认使用 https://sub.aaa.team/config-zz-realip-route。
+运行时可输入自定义配置文件 URL，默认使用 https://sub.aaa.team/config-zz-realip-route，默认配置文件只是一个模板，需要添加自己的节点。
 安装完成后，需将其他设备的网关和 DNS 指向设备 IP（如 192.168.1.3）。
 日志级别：
 默认 INFO：显示主要操作信息。
 修改脚本顶部 LOG_LEVEL="DEBUG" 可启用详细调试日志。
 
 ## 已知问题
-IPv6 支持：未实现。
-系统兼容性：目前仅在 NanoPi R2S（Armbian Debian）测试，其他设备可能需调整。
-卸载限制：无法完全恢复 /etc/resolv.conf 的原始内容，默认设置为 8.8.8.8。
+IPv6 支持：未实现，安装后如有问题，必须打开某些网站出现证书问题，请关闭电脑ipv6。
+系统兼容性：目前仅在 NanoPi R2S 设备上测试，经济有限，其他设备可能无法适配。
+
