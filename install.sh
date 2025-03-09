@@ -111,8 +111,23 @@ install_singbox() {
     log "INFO" "检测到系统: $OS-$ARCH"
 
     SINGBOX_VERSION="1.11.4"
-    SINGBOX_URL="https://gh.aaa.team/github.com/SagerNet/sing-box/releases/download/v${SINGBOX_VERSION}/sing-box-${SINGBOX_VERSION}-${OS}-${ARCH}.tar.gz"
-    log "INFO" "sing-box 下载地址: $SINGBOX_URL"
+    DEFAULT_SINGBOX_URL="https://gh.aaa.team/github.com/SagerNet/sing-box/releases/download/v${SINGBOX_VERSION}/sing-box-${SINGBOX_VERSION}-${OS}-${ARCH}.tar.gz"
+    
+    # 提示用户是否使用自定义下载地址
+    log "INFO" "是否使用自定义 sing-box 下载地址？(默认 N，使用 ${DEFAULT_SINGBOX_URL}) [Y/N]: "
+    read USE_CUSTOM_URL
+    case "$USE_CUSTOM_URL" in
+        [Yy]*)
+            log "INFO" "请输入自定义 sing-box 下载地址（需为 .tar.gz 格式）:"
+            read SINGBOX_URL
+            [ -z "$SINGBOX_URL" ] && { log "ERROR" "下载地址不能为空"; exit 1; }
+            log "INFO" "使用自定义下载地址: $SINGBOX_URL"
+            ;;
+        *)
+            SINGBOX_URL="$DEFAULT_SINGBOX_URL"
+            log "INFO" "使用默认下载地址: $SINGBOX_URL"
+            ;;
+    esac
 
     log "INFO" "正在下载 sing-box..."
     log "DEBUG" "执行 wget 下载 sing-box..."
@@ -303,7 +318,7 @@ uninstall() {
     rm -rf /etc/iptables && log "DEBUG" "已移除 /etc/iptables 目录" || log "WARN" "未找到 /etc/iptables 目录"
 
     # 移除 iptables-persistent（可选，因为可能是系统原有组件）
-    log "INFO" "卸载 iptables-persistent..."
+    log "INFO" "卸载 iptables-persistent（可选）..."
     apt remove -y iptables-persistent > /dev/null 2>&1 && log "DEBUG" "已卸载 iptables-persistent" || log "WARN" "卸载 iptables-persistent 失败或未安装"
 
     # 恢复 systemd-resolved（如果之前被禁用）
