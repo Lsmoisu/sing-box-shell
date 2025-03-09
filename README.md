@@ -66,7 +66,8 @@ sh install.sh uninstall
 配置 systemd 服务和防火墙规则。
 设置 DNS 和 IP 转发。
 配置选项：
-运行时可输入自定义配置文件 URL，默认使用 https://sub.aaa.team/config-zz-realip-route，默认配置文件只是一个模板，需要添加自己的节点。
+运行时可输入自定义配置文件 URL，默认使用 https://sub.aaa.team/config-zz-realip-route  
+默认配置文件只是一个模板，需要添加自己的节点。
 安装完成后，需将其他设备的网关和 DNS 指向设备 IP（如 192.168.1.3）。
 日志级别：
 默认 INFO：显示主要操作信息。
