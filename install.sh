@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # 日志级别设置 (DEBUG/INFO)，全局变量
-LOG_LEVEL="DEBUG"  # 可改为 INFO 用于正常模式
+LOG_LEVEL="INFO"  # 默认设置为 INFO
 
 # 日志函数，使用 printf 替代 echo -e
 log() {
@@ -250,22 +250,89 @@ check_status() {
     systemctl status sing-box > /dev/null 2>&1 && log "INFO" "sing-box 服务运行正常" || log "ERROR" "sing-box 服务未运行"
 }
 
-# 主执行流程
-main() {
-    log "DEBUG" "脚本开始执行..."
-    get_network_info
-    check_network
-    update_and_install
-    install_singbox
-    setup_update_script
-    download_config
-    setup_service
-    configure_network
-    setup_firewall
-    check_status
-    
-    log "INFO" "部署完成！请将其他设备的网关和 DNS 指向: $IP_ADDR"
-    log "DEBUG" "脚本执行完成"
+# 卸载函数
+uninstall() {
+    log "INFO" "开始卸载 sing-box 及相关配置..."
+
+    # 停止并禁用 sing-box 服务
+    log "INFO" "停止并禁用 sing-box 服务..."
+    systemctl stop sing-box 2>/dev/null
+    systemctl disable sing-box 2>/dev/null
+    rm -f /etc/systemd/system/sing-box.service
+    systemctl daemon-reload
+    log "DEBUG" "已移除 sing-box 服务文件"
+
+    # 移除 sing-box 可执行文件
+    log "INFO" "移除 sing-box 可执行文件..."
+    rm -f /usr/local/bin/sing-box && log "DEBUG" "已移除 /usr/local/bin/sing-box" || log "WARN" "未找到 /usr/local/bin/sing-box"
+
+    # 移除自动更新脚本和 crontab 任务
+    log "INFO" "移除自动更新脚本和 crontab 任务..."
+    rm -f /usr/local/bin/upconfig.sh && log "DEBUG" "已移除 /usr/local/bin/upconfig.sh" || log "WARN" "未找到 /usr/local/bin/upconfig.sh"
+    (crontab -l 2>/dev/null | grep -v "upconfig.sh") | crontab - || log "WARN" "清理 crontab 任务失败"
+
+    # 移除配置文件
+    log "INFO" "移除 sing-box 配置文件..."
+    rm -rf /etc/sing-box && log "DEBUG" "已移除 /etc/sing-box 目录" || log "WARN" "未找到 /etc/sing-box 目录"
+
+    # 还原 /etc/resolv.conf
+    log "INFO" "还原 /etc/resolv.conf..."
+    if [ -e /etc/resolv.conf ]; then
+        if lsattr /etc/resolv.conf 2>/dev/null | grep -q "i----"; then
+            log "DEBUG" "检测到 /etc/resolv.conf 为 immutable，正在移除该属性..."
+            chattr -i /etc/resolv.conf || log "WARN" "无法移除 /etc/resolv.conf 的 immutable 属性"
+        fi
+        # 恢复默认 DNS（这里假设使用 8.8.8.8，可根据系统调整）
+        echo "nameserver 8.8.8.8" > /etc/resolv.conf && log "DEBUG" "已还原 /etc/resolv.conf" || log "WARN" "无法写入 /etc/resolv.conf"
+    fi
+
+    # 禁用 IP 转发并清理 sysctl 配置
+    log "INFO" "禁用 IP 转发..."
+    sysctl -w net.ipv4.ip_forward=0 > /dev/null 2>&1
+    sysctl -w net.ipv6.conf.all.forwarding=0 > /dev/null 2>&1
+    sed -i '/net.ipv4.ip_forward=1/d' /etc/sysctl.conf
+    sed -i '/net.ipv6.conf.all.forwarding=1/d' /etc/sysctl.conf
+    sysctl -p > /dev/null 2>&1 && log "DEBUG" "已清理 /etc/sysctl.conf 中的 IP 转发配置" || log "WARN" "清理 sysctl 配置失败"
+
+    # 清理防火墙规则
+    log "INFO" "清理防火墙规则..."
+    iptables -F && iptables -t nat -F && log "DEBUG" "已清理 IPv4 规则" || log "WARN" "清理 IPv4 规则失败"
+    if command -v ip6tables > /dev/null 2>&1; then
+        ip6tables -F && log "DEBUG" "已清理 IPv6 规则" || log "WARN" "清理 IPv6 规则失败"
+    fi
+    rm -rf /etc/iptables && log "DEBUG" "已移除 /etc/iptables 目录" || log "WARN" "未找到 /etc/iptables 目录"
+
+    # 移除 iptables-persistent（可选，因为可能是系统原有组件）
+    log "INFO" "卸载 iptables-persistent..."
+    apt remove -y iptables-persistent > /dev/null 2>&1 && log "DEBUG" "已卸载 iptables-persistent" || log "WARN" "卸载 iptables-persistent 失败或未安装"
+
+    # 恢复 systemd-resolved（如果之前被禁用）
+    log "INFO" "尝试恢复 systemd-resolved 服务..."
+    systemctl enable systemd-resolved 2>/dev/null && systemctl start systemd-resolved 2>/dev/null && log "DEBUG" "已恢复 systemd-resolved" || log "WARN" "恢复 systemd-resolved 失败，可能未安装"
+
+    log "INFO" "卸载完成！系统已尽可能恢复到安装前的状态。"
 }
 
-main
+# 主执行流程
+main() {
+    if [ "$1" = "uninstall" ]; then
+        log "DEBUG" "检测到 uninstall 参数，开始执行卸载..."
+        uninstall
+    else
+        log "DEBUG" "脚本开始执行安装流程..."
+        get_network_info
+        check_network
+        update_and_install
+        install_singbox
+        setup_update_script
+        download_config
+        setup_service
+        configure_network
+        setup_firewall
+        check_status
+        log "INFO" "部署完成！请将其他设备的网关和 DNS 指向: $IP_ADDR"
+        log "DEBUG" "脚本执行完成"
+    fi
+}
+
+main "$1"
