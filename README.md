@@ -1,5 +1,5 @@
 # Sing-Box Shell
-本脚本由Grok3生成
+本脚本由Grok3生成 
 一个用于在 Linux 网关设备上自动部署和卸载 `sing-box` 的 Shell 脚本。目前已在 **NanoPi R2S**（Armbian Debian 环境）上测试通过。
 
 ## 功能特性
