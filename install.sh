@@ -401,6 +401,7 @@ flush ruleset
 table inet filter {
     chain input {
         type filter hook input priority 0; policy drop;
+        iifname "lo" accept
         ct state established,related accept
         ip saddr { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } accept
         tcp dport 22 accept
@@ -423,6 +424,7 @@ EOF
         systemctl enable nftables 2>/dev/null || log "WARN" "无法启用 nftables 服务"
     else
         iptables -F && iptables -t nat -F || { log "ERROR" "清理 IPv4 规则失败"; exit 1; }
+        iptables -A INPUT -i lo -j ACCEPT
         iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
         iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT
         iptables -A INPUT -s 172.16.0.0/12 -j ACCEPT
