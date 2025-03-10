@@ -404,8 +404,6 @@ table inet filter {
         iifname "lo" accept
         ct state established,related accept
         ip saddr { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } accept
-        tcp dport 22 accept
-        udp dport 53 accept
     }
     chain forward {
         type filter hook forward priority 0; policy accept;
@@ -429,8 +427,6 @@ EOF
         iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT
         iptables -A INPUT -s 172.16.0.0/12 -j ACCEPT
         iptables -A INPUT -s 192.168.0.0/16 -j ACCEPT
-        iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-        iptables -A INPUT -p udp --dport 53 -j ACCEPT
         iptables -A FORWARD -i "$INTERFACE" -j ACCEPT
         iptables -t nat -A POSTROUTING -o "$INTERFACE" -j MASQUERADE
         
