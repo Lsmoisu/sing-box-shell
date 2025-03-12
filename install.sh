@@ -236,7 +236,7 @@ setup_update_script() {
 
 # 下载配置文件
 download_config() {
-    DEFAULT_CONFIG_URL="https://sub.aaa.team/config-66ca38b4bd8d"
+    DEFAULT_CONFIG_URL="https://sub.aaa.team/config-route-default"
     log "INFO" "请输入配置文件 URL（回车使用默认: $DEFAULT_CONFIG_URL）: "
     read CONFIG_URL
     [ -z "$CONFIG_URL" ] && CONFIG_URL="$DEFAULT_CONFIG_URL" && log "INFO" "使用默认配置文件: $CONFIG_URL"
